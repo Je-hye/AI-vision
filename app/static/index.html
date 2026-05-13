@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Vision Gesture Events</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar">
+        <div>
+          <h1>AI Vision Gesture Events</h1>
+          <p id="health">Checking configuration</p>
+        </div>
+        <div class="status" id="statusBadge">idle</div>
+      </section>
+
+      <section class="controls">
+        <label>
+          Stream URL
+          <input id="streamUrl" placeholder="rtsp://, https:// .m3u8, or MJPEG URL" />
+        </label>
+        <label>
+          Confidence
+          <input id="confidence" type="number" min="0" max="1" step="0.05" value="0.5" />
+        </label>
+        <label>
+          Sample FPS
+          <input id="fps" type="number" min="0.1" max="30" step="0.1" value="1" />
+        </label>
+        <label>
+          Consecutive Frames
+          <input id="consecutive" type="number" min="1" max="20" step="1" value="2" />
+        </label>
+        <label>
+          Cooldown Seconds
+          <input id="cooldown" type="number" min="0" max="120" step="0.5" value="5" />
+        </label>
+        <label>
+          Target Classes
+          <input id="targetClasses" placeholder="optional, comma separated" />
+        </label>
+        <div class="actions">
+          <button id="startBtn">Start</button>
+          <button id="stopBtn" class="secondary">Stop</button>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="viewer">
+          <div class="frameWrap">
+            <img id="latestFrame" alt="" />
+            <canvas id="overlay"></canvas>
+            <div id="emptyFrame">No frame yet</div>
+          </div>
+        </div>
+        <aside class="panel">
+          <h2>Detections</h2>
+          <div id="metrics"></div>
+          <ul id="detections"></ul>
+        </aside>
+      </section>
+
+      <section class="events">
+        <h2>Event Log</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Gesture</th>
+              <th>Confidence</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody id="eventsBody"></tbody>
+        </table>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
