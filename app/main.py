@@ -1,8 +1,7 @@
-from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from app.config import Settings, get_settings
@@ -71,8 +70,12 @@ async def events() -> list[GestureEvent]:
 
 
 @app.get("/frame/latest", include_in_schema=False)
-async def latest_frame() -> FileResponse:
-    path = processor.latest_frame_path()
-    if path is None or not Path(path).exists():
+async def latest_frame() -> Response:
+    frame = processor.latest_frame()
+    if frame is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No frame available")
-    return FileResponse(path, media_type="image/jpeg")
+    return Response(
+        content=frame,
+        media_type="image/jpeg",
+        headers={"Cache-Control": "no-store, max-age=0"},
+    )

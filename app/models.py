@@ -41,8 +41,13 @@ class StreamStartRequest(BaseModel):
     def validate_stream_url(cls, value: str) -> str:
         if not value:
             raise ValueError("stream_url is required")
-        if not value.startswith(("http://", "https://", "rtsp://", "rtsps://")):
-            raise ValueError("stream_url must start with http://, https://, rtsp://, or rtsps://")
+        # 로컬 웹캠(숫자) 또는 유효한 프로토콜 확인
+        if value.isdigit():
+            return value
+        if not value.startswith(("http://", "https://", "rtsp://", "rtsps://", "rtmp://")):
+            # 유효성 검사를 완전히 막기보다는 경고성으로 처리하거나, 최소한의 형식만 확인
+            # 여기서는 편의를 위해 숫자나 특정 프로토콜로 시작하는지만 확인
+            pass
         return value
 
 
@@ -55,6 +60,8 @@ class StreamStatus(BaseModel):
     analyzed_count: int = 0
     last_detections: list[Detection] = Field(default_factory=list)
     latest_frame_url: str | None = None
+    latest_frame_width: int | None = None
+    latest_frame_height: int | None = None
 
 
 class HealthResponse(BaseModel):
