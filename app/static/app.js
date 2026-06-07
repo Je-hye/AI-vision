@@ -91,11 +91,23 @@ function drawOverlay(detections) {
   ctx.fillStyle = "#f4c430";
   ctx.lineWidth = 2;
   ctx.font = "14px system-ui";
+  const imageWidth = latestFrame.naturalWidth;
+  const imageHeight = latestFrame.naturalHeight;
+  if (!imageWidth || !imageHeight) {
+    return;
+  }
+  const scale = Math.min(overlay.width / imageWidth, overlay.height / imageHeight);
+  const renderedWidth = imageWidth * scale;
+  const renderedHeight = imageHeight * scale;
+  const offsetX = (overlay.width - renderedWidth) / 2;
+  const offsetY = (overlay.height - renderedHeight) / 2;
   detections.forEach((detection) => {
     const box = detection.bbox;
-    const x = box.x - box.width / 2;
-    const y = box.y - box.height / 2;
-    ctx.strokeRect(x, y, box.width, box.height);
+    const x = offsetX + (box.x - box.width / 2) * scale;
+    const y = offsetY + (box.y - box.height / 2) * scale;
+    const width = box.width * scale;
+    const height = box.height * scale;
+    ctx.strokeRect(x, y, width, height);
     ctx.fillText(detection.class_name, x + 4, Math.max(16, y - 6));
   });
 }
@@ -121,4 +133,4 @@ loadHealth().catch((error) => {
   health.textContent = error.message;
 });
 refresh().catch(() => {});
-setInterval(() => refresh().catch(() => {}), 2000);
+setInterval(() => refresh().catch(() => {}), 500);
